@@ -1,0 +1,42 @@
+body, h1, p {
+  margin: 0;
+} 
+
+.container {
+	background: pink;
+}
+
+.item {
+	padding: 5%;
+}
+
+.item-1 {
+	background: yellowgreen;
+}
+
+.item-2 { 
+	background: yellow;
+}
+
+/*  
+ *  [MediaQuery] 현재 보고 있는 환경이 'screen'이고, 최소폭이 700px 이상
+ */
+@media screen and (min-width: 700px) {
+	.container {
+		font-size: 0;
+	}
+
+	.item {
+		display: inline-block;
+		vertical-align: top;
+		font-size: 1rem;
+	}
+
+	.item-1 {
+		width: 30%;
+	}
+
+	.item-2 {
+		width: 50%;
+	}
+}
