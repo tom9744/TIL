@@ -1,0 +1,29 @@
+body, p {
+    margin: 0;
+}
+
+div {
+    box-sizing: border-box;
+}
+
+.container {
+    display: grid;
+    /* grid-template-columns: 40% 60%; */
+    grid-template-columns: 4fr 6fr;
+    grid-gap: 1rem;
+
+    height: 100vh;
+    background: lightslategray;
+}
+
+.item {
+    background: lightcyan;
+}
+
+.item:nth-child(odd) {
+    background: lightblue;
+}
+
+.img {
+    width: 100px;
+} 
