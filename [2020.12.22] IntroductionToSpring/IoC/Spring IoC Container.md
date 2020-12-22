@@ -36,7 +36,7 @@ Bean의 이름이 아닌 타입으로도 가져올 수 있지만, 실제로 Appl
 ## Singleton Pattern
 
 Spring이 제공하는 IoC Container는 Singleton Scope의 객체이다.
-즉, 객체를 계속 생성하는 것이 아니라, 하나의 객체를 Application 전반에서 재사용한다.
+즉, 다수의 객체를 계속 생성하는 것(= Prototype)이 아니라, 하나의 객체를 Application 전반에서 재사용한다.
 
 멀티 스레드 상황에서 Singleton Scope를 구현하는 것은 굉장히 까다로운 일인데,
 이러한 것을 IoC Container를 사용하면 특별한 코드를 작성하지 않아도 손쉽게 Singleton Scope를 달성할 수 있게 된다.
@@ -57,3 +57,6 @@ public class Singleton {
 	}
 }
 ```
+
+이와 같이 Singleton Pattern을 적용해 다수의 객체를 생성하는 대신 하나의 객체를 재활용하게 되면
+메모리적으로 효율적이고, 런타임 상황에서의 성능 최적화에도 유리하게 된다.

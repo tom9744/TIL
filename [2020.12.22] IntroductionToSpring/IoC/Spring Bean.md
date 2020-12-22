@@ -24,7 +24,8 @@ IoC Container를 생성하고 Bean을 등록할 때 사용하는 여러가지 In
 여러가지 Life Cycle Callback 중에는 이러한 `@Component` Annotation이 붙어있는 모든 클래스를 찾아서 그 클래스의 인스턴스를 생성해 Bean으로 등록하는 
 **Annotation Processor**가 포함되어 있다. 
 
-Spring Boot Project에서는 `@SpringBootApplication` Annotation 내부의 `@ComponentScan` Annotation이 **Component Annotation을 탐색할 범위를 지정**해준다. 
+Spring Boot Project에서는 `@SpringBootApplication` Annotation 내부의 `@ComponentScan(basePackageClasses = PetClinicApplication.class)`  
+Annotation이 **Component Annotation을 탐색하기 위한 Component Scanning 수행 범위를 지정**해준다. 
 
 ```
 @SpringBootApplication
@@ -35,11 +36,13 @@ public class PetClinicApplication {
 }
 ```
 
-위의 코드는 `@SpringBootApplication`이 등록되어 있는 PetClinicApplication 클래스의 위치에서부터  
+위의 코드는 `@SpringBootApplication` Annotation이 등록되어 있는 PetClinicApplication 클래스의 위치에서부터  
 모든 하위 패키지에 포함된 모든 클래스 중 `@Component` Annotation이 붙어있는 클래스를 탐색해 Bean으로 등록하도록 한다.
 
 `@Component` Annotation의 변형에는 `@Controller, @Repository, @Service, @Configuration` 등이 있으며,  
 사용자의 기호에 따라 Custom Annotation도 생성 가능한다. (`@Controller` Annotation은  `@Component`라는 **Meta Annotation**을 사용한다.)
+
+**이 방법이 최신 버전의 Spring Boot Application에서 사용하는 방식이다.**
 
 
 ### 2. XML 또는 자바 설정 파일에서 직접 등록
@@ -47,6 +50,25 @@ public class PetClinicApplication {
 최근에는 XML 파일을 사용하기보단, **자바 설정 파일**을 통해 Bean을 등록한다.
 자바 설정 파일은 일반적인 .java 파일에 다음과 같은 코드를 작성하여 만들 수 있다.
 
+**XML 파일 (.xml)**
+```
+<!--  Bean 등록  -->
+<bean id="bookService"
+      class="me.catfish.applicationcontext.BookService">
+    <!-- Dependency Injection 설정 (name: Setter, ref: 참조하려는 Bean의 ID) -->
+    <property name="bookRepository" ref="bookRepository"/>
+</bean>
+
+<bean id="bookRepository"
+      class="me.catfish.applicationcontext.BookRepository"/>
+```
+
+```
+<!--  Bean Scanning  -->
+<context:component-scan base-package="me.catfish.applicationcontext">
+```
+
+**자바 설정 파일 (.java)**
 ```
 @Configuration
 public class SampleConfig {
@@ -91,3 +113,10 @@ class OwnerController {
     private OwnerRepository owners;  // Dependency Injection
 }
 ```
+## Bean의 장점
+
+1. 의존성 관리
+2. 스코프 - Singleton Scope
+3. 라이프사이클 인터페이스
+  - `@PostConstruct`와 같은 다양한 라이프사이클 인터페이스를 통해, Bean 객체가 생성되고 파괴되는 과정에 특정 작업을 수행할 수 있다.
+

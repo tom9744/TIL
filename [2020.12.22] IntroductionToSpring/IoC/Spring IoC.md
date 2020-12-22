@@ -1,5 +1,8 @@
 # Inversion of Control (제어권 역전)
 
+Inversion of Control은 의존 관계 주입(Dependency Injection)이라고도 하며, 어떤 객체가 사용하는  
+**의존 객체를 직접 만들어 사용하는 것이 아니라, 외부로부터 주입 받아 사용하는 방법**을 말한다.
+
 Spring Sample Project인 **PetClinic**의 OwnerController 클래스를 확인하면, 다음과 같은 코드가 존재한다.
 
 ```
@@ -45,7 +48,7 @@ class OwnerController {
 이는, `OwnerController` 클래스의 생성자가 하나만 존재하는 상황에서 인스턴스를 생성하려면
 다음의 코드처럼 반드시 매개변수로 `OwnerRepository`의 객체가 주어져야 하기 때문이다.
 즉, **`OwnerController` 클래스의 인스턴스가 생성되었다면, 반드시 `OwnerRepository`의 객체를 가지고 있게 된다.**
-
+ 
 ```
 @Test
 public void testOwner() {
