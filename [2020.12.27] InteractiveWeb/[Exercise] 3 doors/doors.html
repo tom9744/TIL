@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interative Web - Exercise (3 Doors)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        .stage {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            width: 100vw;
+            height: 100vh;
+
+            background: #333333;
+        }
+        .door {
+            position: relative;
+            width: 100px;
+            height: 150px;
+
+            margin: 10px;
+        }
+        .door-back {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+
+            background: black;
+            overflow: hidden;
+        }
+        .content {
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100px;
+            height: 100px;
+
+            display: flex;
+            align-items: center;
+            text-align: center;
+
+            font-family: 'Times New Roman', Times, serif;
+            color: white;
+
+            transform: translate3d(100%, 0, 0);
+            transition: 0.5s 0.5s;
+        }
+        .door-body {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+
+            transition: 0.5s;
+            transform-origin: left;
+        }
+        .door:nth-child(1) .door-body { background: dodgerblue; }
+        .door:nth-child(2) .door-body { background: tomato; }
+        .door:nth-child(3) .door-body { background: greenyellow; }
+        .door-opened .door-body {
+            transform: perspective(700px) rotateY(-120deg);
+        }
+        .door-opened .content {
+            transform: translate3d(0, 0, 0);
+        }
+    </style>
+</head>
+<body>
+    <div class="stage">
+        <div class="door">
+            <div class="door-back">
+                <div class="content">
+                    Hello Everyone!
+                </div>
+            </div>
+            <div class="door-body"></div>
+        </div>
+
+        <div class="door">
+            <div class="door-back">
+                <div class="content">
+                    This is an example
+                </div>
+            </div>
+            <div class="door-body"></div>
+        </div>
+
+        <div class="door">
+            <div class="door-back">
+                <div class="content">
+                    for CSS 3D Effects
+                </div>
+            </div>
+            <div class="door-body"></div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            const stageElem = document.querySelector('.stage');
+            let openedElem;  // 현재 활성화된 DOM 저장
+
+            const doorHandler = ({ target }) => {
+                const targetElem = target.parentNode;
+                
+                if (openedElem) {
+                    openedElem.classList.remove('door-opened');
+                }
+
+                if (target.classList.contains('door-body')) {
+                    targetElem.classList.add('door-opened');
+                    openedElem = targetElem;
+                }
+            };
+        
+            stageElem.addEventListener('click', doorHandler);
+        })();
+    </script>
+</body>
+</html>
