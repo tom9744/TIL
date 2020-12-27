@@ -1,4 +1,4 @@
-# SpringBoot & JPA로 간단한 API 만들기 정리
+# Spring API - Entity
 
 ```
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

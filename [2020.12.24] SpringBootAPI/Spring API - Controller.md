@@ -1,4 +1,4 @@
-# Spring API - Repository.java
+# Spring API - Controller
 
 ```
 @RestController

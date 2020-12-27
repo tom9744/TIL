@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Interative Web Basics 1</title>
+    <style>
+        .box-container {
+            display: flex;
+        }
+        .box {
+            width: 100px;
+            height: 100px;
+            border: 2px solid black;
+            background: rgba(255, 255, 0, 0.7);
+
+            /* Text 중앙 정렬 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            transition: 0.5s;
+        }
+        .box:hover{
+            /* 다수의 Transform을 동시에 적용할 수 있다. */
+            transform: scale(1.5) rotate(45deg);
+        }
+    </style>
+</head>
+<body>
+    <h1>CSS Transform</h1>
+
+    <div class="box-container">
+        <div class="box">A</div>
+        <div class="box">B</div>
+        <div class="box">C</div>
+        <div class="box">D</div>
+        <div class="box">E</div>
+    </div>
+</body>
+</html>

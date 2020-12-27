@@ -155,7 +155,7 @@ public class UserService {
 
   @Resource(name = "bCryptPasswordEncoder")
   private PasswordEncoder bCryptPasswordEncoder;
-  
+
   @Autowired
   private MessageSourceAccessor msa;
 
@@ -165,5 +165,17 @@ public class UserService {
       }
       return userRepository.save(userDto.toEntityWithPasswordEncode(bCryptPasswordEncoder);
   }
+}
+```
+
+#### Repository (DAO)
+- 기능
+    - 실제로 Database에 접근하는 객체이다.
+    - Service와 Databe를 연결하는 연결고리 역할을 수행한다.
+    - SQL Query를 사용하여 Database에 접근하고, 적절한 CRUD API를 제공해야 한다.
+
+```
+public interface UserRepository extends JpaRepository<User, Long> {
+
 }
 ```
