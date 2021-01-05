@@ -98,7 +98,6 @@ res.status(200).json({ token: token });
 *JWT*를 사용할 때, ***Token*의 유효시간과 사용자의 편의성이라는 두 가치 사이에서 *Trade-Off*를 적절히 조절**해야 한다.
 유효시간을 길게 설정하면 사용자의 입장에서는 번거로운 로그인 과정을 반복하지 않아 편리하지만, 보안적 측면에서 취약해진다.  
 
-이러한 문제점을 개선하기 위해 다양한 방법이 제시되고 있으며, *Access Token*과 *Refresh Token*을 사용하는 방법이 대중적이다.  
 
 
 ## Using & Validating JWT
