@@ -57,6 +57,40 @@ function AutoBind(_target: any, _methodName: string, descriptor: PropertyDescrip
     return modifiedDescriptor
 }
 
+// Project List Class
+class ProjectList {
+    templateElem: HTMLTemplateElement;
+    actualElem: HTMLElement;
+    destinationElem: HTMLDivElement;
+
+    /**
+     * type 변수의 타입은 문자열 'active' 또는 'finished'만 가질 수 있는 Literal Union 타입이다. 
+     */
+    constructor(private type: "active" | "finished") {
+        this.templateElem = document.getElementById("project-list")! as HTMLTemplateElement; 
+        this.destinationElem = document.getElementById("app")! as HTMLDivElement;
+
+        const importedNode = document.importNode(this.templateElem.content, true);
+        this.actualElem = importedNode.firstElementChild as HTMLElement;
+        this.actualElem.id = `${this.type}-projects`;
+    
+        this.attach();
+        this.renderContent();
+    }
+
+    private renderContent() {
+        const listId = `${this.type}-projects-list`;
+        this.actualElem.querySelector("ul")!.id = listId;
+        this.actualElem.querySelector("h2")!.textContent = `${this.type.toUpperCase()} PROJECT`;
+        
+    }
+
+    private attach() {
+        this.destinationElem.insertAdjacentElement("beforeend", this.actualElem);
+    }
+}
+
+// Project Input Class
 class ProjectInput {
     templateElem: HTMLTemplateElement;
     actualElem: HTMLElement;
@@ -160,3 +194,5 @@ class ProjectInput {
 }
 
 const inputInstance = new ProjectInput();
+const activeProjectList = new ProjectList("active");
+const finishedProjectList = new ProjectList("finished");
