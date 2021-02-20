@@ -1,3 +1,49 @@
+// Validation
+
+/**
+ * interface를 사용해 입력값 검증에 사용할 수 있는 객체 틀을 생성한다. 
+ * 
+ * 변수에 '?'를 추가하면 `Type | undefined`와 같은 Union 타입이 된다.
+ * 즉, 필수적으로 존재해야 하는 속성(Property)이 아니게 된다.
+ **/
+interface Validatable {
+    value: string | number;
+    required?: boolean;
+    minLength?: number;
+    maxLength?: number;
+    minValue?: number;
+    maxValue?: number;
+}
+
+function validate(input: Validatable) {
+    let isValid = true;
+
+    // input 객체에 'required' 속성이 존재하는 경우...
+    if (input.required) {
+        // AND 연산자(&&)를 이용해 isValid 값을 갱신한다.
+        isValid = isValid && input.value.toString().trim().length !== 0;
+    }
+
+    // minLength가 0이면 false로 인식되기 때문에, !== undefined 또는 != null를 사용한다.
+    if (input.minLength !== undefined && typeof input.value === 'string') {
+        isValid = isValid && input.value.length > input.minLength;
+    }
+
+    if (input.maxLength !== undefined && typeof input.value === 'string') {
+        isValid = isValid && input.value.length < input.maxLength;
+    }
+
+    if (input.minValue !== undefined && typeof input.value === 'number') {
+        isValid = isValid && input.value > input.minValue;
+    }
+    
+    if (input.maxValue !== undefined && typeof input.value === 'number') {
+        isValid = isValid && input.value < input.maxValue;
+    }
+
+    return isValid;
+}
+
 // Autobind Decorator
 function AutoBind(_target: any, _methodName: string, descriptor: PropertyDescriptor) {
     const originMethod = descriptor.value;
@@ -10,7 +56,6 @@ function AutoBind(_target: any, _methodName: string, descriptor: PropertyDescrip
     };
     return modifiedDescriptor
 }
-
 
 class ProjectInput {
     templateElem: HTMLTemplateElement;
@@ -52,10 +97,26 @@ class ProjectInput {
         const description = this.descriptionInputElem.value;
         const people = this.peopleInputElem.value;
 
+        // 입력 값 검증을 위해 Interface 기반의 객체 생성
+        const titleValidatable: Validatable = {
+            value: title,
+            required: true
+        } 
+        const descriptionValidatable: Validatable = {
+            value: description,
+            required: true,
+            minLength: 5
+        } 
+        const peopleValidatable: Validatable = {
+            value: +people,
+            required: true,
+            minValue: 2
+        } 
+
         if (
-            title.trim().length === 0 ||
-            description.trim().length === 0 ||
-            people.trim().length === 0 
+            !validate(titleValidatable) ||
+            !validate(descriptionValidatable) ||
+            !validate(peopleValidatable)
         ) {
             alert("잘못된 입력 형식입니다.");
             return;
