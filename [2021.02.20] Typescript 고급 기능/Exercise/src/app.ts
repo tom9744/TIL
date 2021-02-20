@@ -1,6 +1,7 @@
 // Proeject State Management Class (Singleton)
 class ProjectState {
     private static instance: ProjectState; 
+    private listeners: any[] = [];   // 구독 패턴(Subscription Pattern) 구현을 위한 Listener 배열
     private projects: any[] = [];
 
     // Singleton Patter Implementation
@@ -17,6 +18,11 @@ class ProjectState {
         return this.instance;
     }
 
+    // 함수에 대한 참조(Reference)를 인자로 받아, listener 배열에 추가한다.
+    addListener (listenerFunction: Function) {
+        this.listeners.push(listenerFunction);
+    }
+
     addProject(title: string, description: string, numOfPeople: number) {
         const newProject = {
             id: Math.random().toString(),  // 임시 ID 생성
@@ -26,6 +32,10 @@ class ProjectState {
         };
 
         this.projects.push(newProject);
+
+        for (const listenerFunction of this.listeners) {
+            listenerFunction(this.projects.slice());  // 복사본을 매개변수로 전달
+        }
     }
 }
 
@@ -101,6 +111,7 @@ class ProjectList {
     templateElem: HTMLTemplateElement;
     actualElem: HTMLElement;
     destinationElem: HTMLDivElement;
+    assignedProjects: any [] = [];
 
     /**
      * type 변수의 타입은 문자열 'active' 또는 'finished'만 가질 수 있는 Literal Union 타입이다. 
@@ -112,9 +123,25 @@ class ProjectList {
         const importedNode = document.importNode(this.templateElem.content, true);
         this.actualElem = importedNode.firstElementChild as HTMLElement;
         this.actualElem.id = `${this.type}-projects`;
+
+        // 전역 변수로 등록된 ProjectState에 Listener를 등록해 구독한다.
+        globalProjectState.addListener((projects: any[]) => {
+            this.assignedProjects = projects;
+            this.renderProjects();
+        });
     
         this.attach();
         this.renderContent();
+    } 
+
+    // 구독한 ProjectState에 변화가 발생해 'projects'가 반환되면, 화면에 렌더링한다.
+    private renderProjects() {
+        const listElem = document.getElementById(`${this.type}-projects-list`)! as HTMLUListElement;
+        for (const projectItem of this.assignedProjects) {
+            const listItem = document.createElement("li");
+            listItem.textContent = projectItem.title;
+            listElem.appendChild(listItem); 
+        }
     }
 
     private renderContent() {
