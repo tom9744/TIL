@@ -1,5 +1,44 @@
-// Validation
+// Proeject State Management Class (Singleton)
+class ProjectState {
+    private static instance: ProjectState; 
+    private projects: any[] = [];
 
+    // Singleton Patter Implementation
+    private constructor() {
+
+    }
+
+    // Getter
+    static getInstance() {
+        if (this.instance) {
+            return this.instance;
+        } 
+        this.instance = new ProjectState();
+        return this.instance;
+    }
+
+    addProject(title: string, description: string, numOfPeople: number) {
+        const newProject = {
+            id: Math.random().toString(),  // 임시 ID 생성
+            title,
+            description,
+            people: numOfPeople
+        };
+
+        this.projects.push(newProject);
+    }
+}
+
+/**
+ * app.ts 파일 내부의 모든 위치에 프로젝트의 상태에 접근할 수 있도록 인스턴스를 생성한다.
+ * 
+ * ProjectState 클래스는 Singleton Patter을 적용하여, 단 하나의 인스턴스만 생성 후 재사용한다.
+ * 따라서, new ProjectState()로 생성자를 호출하지 않고, getter를 통해 인스턴스를 얻는다.
+ **/ 
+const globalProjectState = ProjectState.getInstance();
+
+
+// Validation
 /**
  * interface를 사용해 입력값 검증에 사용할 수 있는 객체 틀을 생성한다. 
  * 
@@ -174,7 +213,10 @@ class ProjectInput {
         // Runtime Type Guard (Tuple === Array)
         if (Array.isArray(userInput)) {
             const [title, desc, people] = userInput;
-            console.log(title, desc, people);
+            
+            // 새로운 프로젝트 생성
+            globalProjectState.addProject(title, desc, people);
+
             this.clearInputFields();
         }
     }
