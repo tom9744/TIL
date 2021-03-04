@@ -1,3 +1,15 @@
+// Drag & Drop Interfaces
+interface Draggable {
+    dragStartHandler(event: DragEvent): void;
+    dragEndHandler(event: DragEvent): void;
+}
+
+interface Droppable {
+    dragOverHandler(event: DragEvent): void;
+    dropHandler(event: DragEvent): void;
+    dragLeaveHandler(event: DragEvent): void;
+}
+
 // Project Types
 enum ProjectStatus { Active, Finished }
 
@@ -107,11 +119,11 @@ function validate(input: Validatable) {
     }
 
     if (input.minValue !== undefined && typeof input.value === 'number') {
-        isValid = isValid && input.value > input.minValue;
+        isValid = isValid && input.value >= input.minValue;
     }
     
     if (input.maxValue !== undefined && typeof input.value === 'number') {
-        isValid = isValid && input.value < input.maxValue;
+        isValid = isValid && input.value <= input.maxValue;
     }
 
     return isValid;
@@ -188,8 +200,14 @@ abstract class Component<T extends HTMLElement, U extends HTMLElement> {
 }
 
 // Proejct Item Class
-class ProjectItem extends Component<HTMLUListElement, HTMLLIElement> {
+class ProjectItem extends Component<HTMLUListElement, HTMLLIElement> implements Draggable {
     private project: Project;
+
+    get numberOfPeople() {
+        const isSingular = this.project.people === 1 ? true : false;
+        
+        return isSingular ? `${this.project.people} person` : `${this.project.people} people`;
+    }
     
     constructor(targetElementId: string, project: Project) {
         super("single-project", targetElementId, false, project.id);
@@ -200,17 +218,30 @@ class ProjectItem extends Component<HTMLUListElement, HTMLLIElement> {
         this.renderComponent();
     }
 
-    configureComponent() {}
+    @AutoBind
+    dragStartHandler(event: DragEvent) {
+        console.log("Drag Started", event);
+    }
+
+    @AutoBind
+    dragEndHandler(event: DragEvent) {
+        console.log("Drag Ended", event);
+    }
+
+    configureComponent() {
+        this.contentElement.addEventListener("dragstart", this.dragStartHandler);
+        this.contentElement.addEventListener("dragend", this.dragEndHandler);
+    }
 
     renderComponent() {
         this.contentElement.querySelector("h2")!.textContent = this.project.title;
-        this.contentElement.querySelector("h3")!.textContent = this.project.people.toString();
+        this.contentElement.querySelector("h3")!.textContent = this.numberOfPeople + " assigned";
         this.contentElement.querySelector("p")!.textContent = this.project.description;
     }
 }
 
 // Project List Class
-class ProjectList extends Component<HTMLDivElement, HTMLElement>{
+class ProjectList extends Component<HTMLDivElement, HTMLElement> implements Droppable{
     assignedProjects: Project[] = [];  // 인스턴스에 배정된 Proejct의 목록을 저장하는 배열.
 
     /**
@@ -222,8 +253,27 @@ class ProjectList extends Component<HTMLDivElement, HTMLElement>{
         this.configureComponent();
         this.renderComponent();
     }
-    
+
+    @AutoBind
+    dragOverHandler(_event: DragEvent) {
+        const listElem = this.contentElement.querySelector("ul")!;
+        listElem.classList.add("droppable");
+    }
+
+    @AutoBind
+    dragLeaveHandler(_event: DragEvent) {
+        const listElem = this.contentElement.querySelector("ul")!;
+        listElem.classList.remove("droppable");
+    }
+
+    @AutoBind
+    dropHandler(_event: DragEvent) {}
+
     configureComponent() {
+        this.contentElement.addEventListener("dragover", this.dragOverHandler);  
+        this.contentElement.addEventListener("dragleave", this.dragLeaveHandler);  
+        this.contentElement.addEventListener("drop", this.dropHandler);
+
         // 전역 변수로 등록된 ProjectState에 Listener를 등록해 구독한다.
         globalProjectState.addListener((projects: Project[]) => {
             // Javascript Array 내장 함수 filter()와 enum 타입을 사용해 필터링 기능을 구현한다.
@@ -306,7 +356,7 @@ class ProjectInput extends Component<HTMLDivElement, HTMLFormElement>{
         const peopleValidatable: Validatable = {
             value: +people,
             required: true,
-            minValue: 2
+            minValue: 1
         } 
 
         if (
