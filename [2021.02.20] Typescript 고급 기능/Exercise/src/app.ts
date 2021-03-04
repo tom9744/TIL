@@ -187,6 +187,28 @@ abstract class Component<T extends HTMLElement, U extends HTMLElement> {
     abstract renderComponent(): void;
 }
 
+// Proejct Item Class
+class ProjectItem extends Component<HTMLUListElement, HTMLLIElement> {
+    private project: Project;
+    
+    constructor(targetElementId: string, project: Project) {
+        super("single-project", targetElementId, false, project.id);
+
+        this.project = project;
+
+        this.configureComponent();
+        this.renderComponent();
+    }
+
+    configureComponent() {}
+
+    renderComponent() {
+        this.contentElement.querySelector("h2")!.textContent = this.project.title;
+        this.contentElement.querySelector("h3")!.textContent = this.project.people.toString();
+        this.contentElement.querySelector("p")!.textContent = this.project.description;
+    }
+}
+
 // Project List Class
 class ProjectList extends Component<HTMLDivElement, HTMLElement>{
     assignedProjects: Project[] = [];  // 인스턴스에 배정된 Proejct의 목록을 저장하는 배열.
@@ -229,9 +251,8 @@ class ProjectList extends Component<HTMLDivElement, HTMLElement>{
         listElem.innerHTML = "";  // 중복된 항목이 렌더링되지 않도록 매번 초기화 해준다. (비용이 매우 큰 방법.)
 
         for (const projectItem of this.assignedProjects) {
-            const listItem = document.createElement("li");
-            listItem.textContent = projectItem.title;
-            listElem.appendChild(listItem); 
+            // [주의] this.contentElement는 <section> 태그이다.
+            new ProjectItem(this.contentElement.querySelector("ul")!.id, projectItem);
         }
     }
 }
