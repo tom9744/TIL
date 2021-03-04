@@ -11,31 +11,36 @@ class Project {
     ) {}
 }
 
-type Listener = (items: Project[]) => void;
+type Listener<T> = (items: T[]) => void;
+
+// Base State Class
+class State<T> {
+    // 구독 패턴(Subscription Pattern) 구현을 위한 Listener 배열
+    protected listeners: Listener<T>[] = [];
+
+    // 함수에 대한 참조(Reference)를 인자로 받아, listener 배열에 추가한다.
+    addListener(listenerFunction: Listener<T>) {
+        this.listeners.push(listenerFunction);
+    }
+}
 
 // Proeject State Management Class (Singleton)
-class ProjectState {
+class ProjectState extends State<Project>{
     private static instance: ProjectState; 
-    private listeners: Listener[] = [];   // 구독 패턴(Subscription Pattern) 구현을 위한 Listener 배열
     private projects: Project[] = [];
 
     // Singleton Patter Implementation
     private constructor() {
-
+        super();
     }
 
-    // Getter
+    // Instance Getter
     static getInstance() {
         if (this.instance) {
             return this.instance;
         } 
         this.instance = new ProjectState();
         return this.instance;
-    }
-
-    // 함수에 대한 참조(Reference)를 인자로 받아, listener 배열에 추가한다.
-    addListener (listenerFunction: Listener) {
-        this.listeners.push(listenerFunction);
     }
 
     addProject(title: string, description: string, numOfPeople: number) {
