@@ -1,4 +1,4 @@
-// Project Type
+// Project Types
 enum ProjectStatus { Active, Finished }
 
 class Project {
@@ -146,7 +146,15 @@ class ProjectList {
 
         // 전역 변수로 등록된 ProjectState에 Listener를 등록해 구독한다.
         globalProjectState.addListener((projects: Project[]) => {
-            this.assignedProjects = projects;
+            // Javascript Array 내장 함수 filter()와 enum 타입을 사용해 필터링 기능을 구현한다.
+            const relevantProjects = projects.filter(project => {
+                if (this.type === "active") {
+                    return project.status === ProjectStatus.Active;
+                }
+                return project.status === ProjectStatus.Finished;
+            });
+
+            this.assignedProjects = relevantProjects;
             this.renderProjects();
         });
     
@@ -157,6 +165,9 @@ class ProjectList {
     // 구독한 ProjectState에 변화가 발생해 'projects'가 반환되면, 화면에 렌더링한다.
     private renderProjects() {
         const listElem = document.getElementById(`${this.type}-projects-list`)! as HTMLUListElement;
+
+        listElem.innerHTML = "";  // 중복된 항목이 렌더링되지 않도록 매번 초기화 해준다. (비용이 매우 큰 방법.)
+
         for (const projectItem of this.assignedProjects) {
             const listItem = document.createElement("li");
             listItem.textContent = projectItem.title;
