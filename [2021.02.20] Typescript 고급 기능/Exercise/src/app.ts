@@ -60,7 +60,7 @@ interface Validatable {
     required?: boolean;
     minLength?: number;
     maxLength?: number;
-    minValue?: number;
+    minValue?: number; 
     maxValue?: number;
 }
 
@@ -73,7 +73,10 @@ function validate(input: Validatable) {
         isValid = isValid && input.value.toString().trim().length !== 0;
     }
 
-    // minLength가 0이면 false로 인식되기 때문에, !== undefined 또는 != null를 사용한다.
+    /**
+     * minLength가 0이면 false로 인식되기 때문에, !== undefined 또는 != null를 사용해야 한다. 
+     * 이 때, != null은 null과 undefined를 모두 포함한다.
+     */
     if (input.minLength !== undefined && typeof input.value === 'string') {
         isValid = isValid && input.value.length > input.minLength;
     }
@@ -99,8 +102,8 @@ function AutoBind(_target: any, _methodName: string, descriptor: PropertyDescrip
     const modifiedDescriptor: PropertyDescriptor = {
         configurable: true,
         get() {
-            const boundFn = originMethod.bind(this);
-            return boundFn;
+            const boundFunction = originMethod.bind(this);
+            return boundFunction;
         }
     };
     return modifiedDescriptor
@@ -111,7 +114,8 @@ class ProjectList {
     templateElem: HTMLTemplateElement;
     actualElem: HTMLElement;
     destinationElem: HTMLDivElement;
-    assignedProjects: any [] = [];
+
+    assignedProjects: any[] = [];  // 인스턴스에 배정된 Proejct의 목록을 저장하는 배열.
 
     /**
      * type 변수의 타입은 문자열 'active' 또는 'finished'만 가질 수 있는 Literal Union 타입이다. 
@@ -148,7 +152,6 @@ class ProjectList {
         const listId = `${this.type}-projects-list`;
         this.actualElem.querySelector("ul")!.id = listId;
         this.actualElem.querySelector("h2")!.textContent = `${this.type.toUpperCase()} PROJECT`;
-        
     }
 
     private attach() {
@@ -161,6 +164,7 @@ class ProjectInput {
     templateElem: HTMLTemplateElement;
     actualElem: HTMLElement;
     destinationElem: HTMLDivElement;
+
     titleInputElem: HTMLInputElement;
     descriptionInputElem: HTMLInputElement;
     peopleInputElem: HTMLInputElement;
@@ -249,12 +253,14 @@ class ProjectInput {
     }
 
     private configure() {
-        /* 
-        ** .bind(this)를 통해 submitHandler()의 this를 클래스(인스턴스)로 변경해야 한다.
-        ** 그렇지 않으면, submitHandler() 내부의 this는 'actualElem'가 된다.
-        */
-        // this.actualElem.addEventListener('submit', this.submitHandler.bind(this));
+        /**
+         * bind(this)를 통해 submitHandler()의 this를 클래스(인스턴스)로 변경해야 한다.
+         * 그렇지 않으면, submitHandler() 내부의 this는 'actualElem'가 된다. 
+         * 
+         * 화살표 함수가 아닌 일반 함수는, 해당 함수를 호출한 대상으로 this의 context가 변경되기 때문이다.
+         **/       
         this.actualElem.addEventListener('submit', this.submitHandler);
+        // this.actualElem.addEventListener('submit', this.submitHandler.bind(this));
     }
 
     private attachElem() {
