@@ -1,8 +1,23 @@
+// Project Type
+enum ProjectStatus { Active, Finished }
+
+class Project {
+    constructor(
+        public id: string,
+        public title: string,
+        public description: string,
+        public people: number,
+        public status: ProjectStatus
+    ) {}
+}
+
+type Listener = (items: Project[]) => void;
+
 // Proeject State Management Class (Singleton)
 class ProjectState {
     private static instance: ProjectState; 
-    private listeners: any[] = [];   // 구독 패턴(Subscription Pattern) 구현을 위한 Listener 배열
-    private projects: any[] = [];
+    private listeners: Listener[] = [];   // 구독 패턴(Subscription Pattern) 구현을 위한 Listener 배열
+    private projects: Project[] = [];
 
     // Singleton Patter Implementation
     private constructor() {
@@ -19,17 +34,18 @@ class ProjectState {
     }
 
     // 함수에 대한 참조(Reference)를 인자로 받아, listener 배열에 추가한다.
-    addListener (listenerFunction: Function) {
+    addListener (listenerFunction: Listener) {
         this.listeners.push(listenerFunction);
     }
 
     addProject(title: string, description: string, numOfPeople: number) {
-        const newProject = {
-            id: Math.random().toString(),  // 임시 ID 생성
+        const newProject = new Project(
+            Math.random().toString(),  // 임시 ID 생성
             title,
             description,
-            people: numOfPeople
-        };
+            numOfPeople,
+            ProjectStatus.Active
+        )
 
         this.projects.push(newProject);
 
@@ -115,7 +131,7 @@ class ProjectList {
     actualElem: HTMLElement;
     destinationElem: HTMLDivElement;
 
-    assignedProjects: any[] = [];  // 인스턴스에 배정된 Proejct의 목록을 저장하는 배열.
+    assignedProjects: Project[] = [];  // 인스턴스에 배정된 Proejct의 목록을 저장하는 배열.
 
     /**
      * type 변수의 타입은 문자열 'active' 또는 'finished'만 가질 수 있는 Literal Union 타입이다. 
@@ -129,7 +145,7 @@ class ProjectList {
         this.actualElem.id = `${this.type}-projects`;
 
         // 전역 변수로 등록된 ProjectState에 Listener를 등록해 구독한다.
-        globalProjectState.addListener((projects: any[]) => {
+        globalProjectState.addListener((projects: Project[]) => {
             this.assignedProjects = projects;
             this.renderProjects();
         });
