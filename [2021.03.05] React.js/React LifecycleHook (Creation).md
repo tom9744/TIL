@@ -22,6 +22,26 @@ Vue.js에서도 `beforeCreate`, `created`와 같은 *Lifecycle Hook*을 이용�
 
 [중요] `constructor()`에서 *Side Effect*가 발생하면, 어플리케이션의 성능에 악영향을 미칠 수 있다.
 
+### 사용 용례
+
+```
+class App extends Component {
+  constructor(props) {
+    super(props);  // 필수!
+
+    console.log("[App.js] Constructor");
+
+    this.state = { ... };
+  }
+
+  this.state = { ... };
+}
+```
+
+`constructor()`에서 `state`를 초기화 하는 경우, `setState()`를 사용하지 않고 `this.state`로 직접 초기화 해주어야 한다. 
+
+이는 `setState()`는 기본적으로 **현재의 `state`와 변경된 `state`를 비교하여 변경된 부분만 수정**하며, `constructor()`가 호출되는 시점에서는 `state`가 아무런 값도 가지고 있지 않아 `setState()`가 정상적으로 작동하지 않기 때문이다.
+
 <br>
 
 ## `getDerivedStateFromProps(props, state)`
@@ -35,6 +55,22 @@ Vue.js에서도 `beforeCreate`, `created`와 같은 *Lifecycle Hook*을 이용�
 `getDerivedStateFromProps()`는 사실 사용할 일이 굉장히 드문 Lifecycle Hook이지만, **` props`의 변경에 따라 컴포넌트 내부의 `state`가 변해야하는 상황**에서 사용된다.
 
 `constructor()`와 마찬가지로 **HTTP 요청을 전송하는 등 *Side Effect*를 유발할 수 있는 로직을 포함해서는 안된다.**
+
+### 사용 용례
+
+```
+class App extends Component {
+  static getDerivedStateFromProps(props, state) {
+    console.log("[App.js] getDerivedStateFromProps", props);
+
+    const updatedState = state;
+
+    return updatedState;  // 필수!  
+  }
+}
+```
+
+`getDerivedStateFromProps()`는 사실 정적 메서드이기 때문에, `static` 키워드를 앞에 추가해 주어야 한다. 또한, 위의 예시에서는 `state`가 변경되지는 않았지만, 반드시 `return updatedState`와 같이 변경된 `state`를 반환해야 한다.
 
 <br>
 
@@ -71,3 +107,15 @@ HTTP 요청을 전송해 서버로부터 새로운 데이터를 가져오거나,
 주의해야 할 것은 `fetch API` 또는 `axios`를 이용해 전송한 HTTP 요청에 대한 `Promise`의 내부에서 `setState()`를 호출하는 **비동기적인 `state`의 변경은 가능**하지만, `componentDidMount()` 내부에서 **직접 `setState()`를 호출하는 동기적인 `state` 변경은 불가능**하다는 점이다.
 
 [참고] `setState()`를 동기적으로 호출하면, React가 컴포넌트를 다시 렌더링하게 되어 성능에 악영향을 미친다.
+
+### 사용 용례
+
+```
+class App extends Component {
+  componentDidMount() {
+    console.log("[App.js] componentDidMount");
+
+    // Send HTTP Requests...
+  }
+}
+```
