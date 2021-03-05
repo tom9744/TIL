@@ -78,6 +78,8 @@ class App extends Component {
 
 이미 앞서 다루었던 Lifecycle Hook으로, `render()`는 `JSX`로 작성된 코드를 반환한다.
 
+[중요] React는 `render()` 메서드가 반환하는 `JSX` 코드를 분석 및 컴파일 하며, 최종적으로 **Virtual DOM**을 생성한다.
+ 
 ### 사용 목적
 
 `render()`는 `JSX` 코드를 반환하기 이전에, 데이터를 필요한 형태로 가공하는 등 **Layout과 관련된 기능**을 수행하고 최종적으로 HTML 코드를 생성한다.
