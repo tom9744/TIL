@@ -103,9 +103,13 @@ class Update extends Component {
 class Update extends Component {
   getSnapshotBeforeUpdate(prevProps, prevState) {
     // Do Something...
+
+    return null;
   }
 }
 ```
+
+[참고] `getSnapshotBeforeUpdate()`는 반드시 *Snapshot Value* 또는 `null`을 반환해야 한다.
 
 <br>
 
@@ -130,3 +134,23 @@ class Update extends Component {
   }
 }
 ```
+
+`componentDidUpdate()` 이전에 호출되는 Lifecycle Hook, `getSnapshotBeforeUpdate()`를 별도로 구현하지 않거나 `null`을 반환하는 경우, 위의 예시와 같이 사용한다.
+
+하지만 `getSnapshotBeforeUpdate()`에서 *Snapshot Value*를 반환하는 경우 아래의 예시와 같이 사용한다.
+
+```
+class Update extends Component {
+  getSnapshotBeforeUpdate(prevProps, prevState) {
+    return {
+      message: "Snapshot!"
+    };
+  }
+
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    console.log(snapshot);  // { message: "Snapshot!" }
+  }
+}
+```
+
+[참고] `componentDidUpdate()`는 기본적으로 `prevProps`, `prevState`, `snapshot` 세 가지의 인자를 가지며, `getSnapshotBeforeUpdate()`를 사용하지 않는 경우 생략할 수 있다.
