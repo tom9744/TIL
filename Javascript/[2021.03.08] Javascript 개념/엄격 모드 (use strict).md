@@ -24,11 +24,11 @@
 
 Javascript는 100% 하위 호환(Backward Compatible)되도록 발전해 왔으므로, **엄격 모드를 지원하지 않는 브라우저에서는 단순한 문자열로 인식**하여 아무런 작업도 수행하지 않도록 한 것이다.
 
-```
+```javascript
 // Sloppy Mode
 function strictFunction() {
-    // Strict Mode
-    "use strict";
+  // Strict Mode
+  "use strict";
 }
 ```
 
@@ -46,34 +46,34 @@ function strictFunction() {
 
 예를 들어 브라우저 환경에서 변수의 선언 없이 `variable`이라는 변수에값을 할당하면, `window.variable`과 같이 전역 객체의 속성이 된다.
 
-```
+```javascript
 variable = 10;
-console.log(window.variable);  // 10
+console.log(window.variable); // 10
 ```
 
 이러한 Javascript의 동작은 편리할 수도 있지만, 아래와 같은 경우에는 문제가 된다.
 
-```
+```javascript
 var theVal = 0;
 
-thVal = 1;  // 실수로 잘못 입력
+thVal = 1; // 실수로 잘못 입력
 
 if (theVal > 0) {
-    console.log("Hello, World!");  // 작동되지 않음
+  console.log("Hello, World!"); // 작동되지 않음
 }
 ```
 
 개발자의 실수로 `theVal`이 아닌 `thVal`이라는 변수에 값을 잘못 할당했는데, Javascript의 **느슨한 모드에서는 아무런 에러가 발생하지 않으므로 디버깅 과정이 복잡**해진다.
 
-```
+```javascript
 "use strict";
 
 var theVal = 0;
 
-thVal = 1;  // 컴파일 에러 발생!
+thVal = 1; // 컴파일 에러 발생!
 
 if (theVal > 0) {
-    console.log("Hello, World!");
+  console.log("Hello, World!");
 }
 ```
 
@@ -87,14 +87,14 @@ if (theVal > 0) {
 
 예를 들어 `ES6`부터 예약어로 사용되기 시작한 `const`와 `let`을 변수명으로 사용하려고 한다면, **느슨한 모드에서는 사용할 수 있지만 엄격 모드에서는 에러를 발생**시킨다.
 
-```
+```javascript
 var let = 10;
 ```
 
-```
+```javascript
 "use strict";
 
-var let = 10;  // 컴파일 에러 발생!
+var let = 10; // 컴파일 에러 발생!
 ```
 
 <br>
@@ -103,34 +103,34 @@ var let = 10;  // 컴파일 에러 발생!
 
 엄격 모드가 활성화되어 있을 때 `delete` 연산자를 이용해 *변수*나 *함수*를 삭제하려고 하면, 에러를 발생시킨다.
 
-```
+```javascript
 var foo = 10;
 delete foo;
 
-function bar() {};
+function bar() {}
 delete bar;
 ```
 
 느슨한 모드에서는 위의 예시 코드는 어떠한 에러도 발생시키지 않는다. 즉, *변수*와 _함수_ 모두 `delete` 연산자를 이용해 삭제할 수 있다.
 
-```
+```javascript
 "use strict";
 
 var foo = 10;
-delete foo;  // 컴파일 에러 발생!
+delete foo; // 컴파일 에러 발생!
 
-function bar() {};
-delete bar;  // 컴파일 에러 발생!
+function bar() {}
+delete bar; // 컴파일 에러 발생!
 ```
 
 반면 엄격 모드에서는 `delete` 연산자로 _변수_ 또는 *함수*를 삭제하려고 하면 에러를 발생시킨다. 또한, 함수에 *인자로 전달된 값*을 삭제하려고 하는 경우도 에러를 발생시킨다.
 
-```
+```javascript
 "use strict";
 
 function bar(arg) {
-    delete arg;  // 컴파일 에러 발생!
-};
+  delete arg; // 컴파일 에러 발생!
+}
 ```
 
 <br>
@@ -139,22 +139,22 @@ function bar(arg) {
 
 `eval` 연산자는 매개변수로 전달한 *Javscript 표현식*을 평가하고 수행하는데, 느슨한 모드에서는 **`eval`에서 선언된 변수가 외부 스코프로 유출**된다.
 
-```
+```javascript
 eval("var foo = 10");
 
-console.log(foo);  // 10, eval에서 선언된 변수 사용 가능
+console.log(foo); // 10, eval에서 선언된 변수 사용 가능
 ```
 
 이러한 경우, **개발자가 작성하지 않은 Javascript 코드가 외부에서 `eval` 연산자를 통해 주입되는 경우 보안상의 문제**가 될 수 있으며, 프로그램이 개발자가 의도한대로 작동하지 않게 된다.
 
 하지만 엄격 모드에서는 `eval`에서 선언된 변수가 외부 스코프로 유출되지 않으며, 따라서 **`eval` 연산자의 사용을 보다 안전**하게 해준다.
 
-```
+```javascript
 "use strict";
 
 var foo = 5;
 
 eval("var foo = 10");
 
-console.log(foo);  // 5, eval에서 선언된 변수 사용 불가능
+console.log(foo); // 5, eval에서 선언된 변수 사용 불가능
 ```
