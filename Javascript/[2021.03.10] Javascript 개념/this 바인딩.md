@@ -253,4 +253,143 @@ console.log(you); // undefined
 
 `new` 키워드를 사용해 함수를 호출하면 `this` 바인딩이 일반 함수나 메서드를 호출하는 경우와는 다른 방식으로 일어난다.
 
+<br>
+
 #### **생성자 함수의 동작 방식**
+
+`new` 키워드와 함께 생성자 함수를 호출하면 다음과 같은 순서로 작동한다.
+
+1. 빈 객체 생성 및 `this` 바인딩
+   - 생성자 함수의 내부 로직을 수행하기에 앞서, 비어있는 객체가 생성된다.
+   - 생성자 함수 내부에서 사용되는 `this`는 이 빈 객체를 가리킨다.
+   - 생성된 빈 객체는 **생성자 함수의 `prototype` 속성이 가리키는 객체**를 자신의 프로토타입 객체로 설정한다.
+2. `this`를 이용한 속성/메서드 생성
+   - 생성된 빈 객체에 `this`를 통해 동적으로 속성/메서드를 추가한다.
+3. 생성된 객체 반환
+   - 반환문이 없는 경우, `this`에 바인딩된 새로 생성한 객체가 반환된다.
+   - 명시적으로 `return this;`를 해도 위와 같이 작동한다.
+   - 다른 것을 반환하는 경우, 해당 함수는 생성자로 사용되지 못한다.
+
+```javascript
+function Person(name) {
+  // -------------------- 1. 빈 객체 생성 및 `this` 바인딩
+  this.name = name; //--- 2. `this`를 이용한 속성/메서드 생성
+  // -------------------- 3. 생성된 객체 반환
+}
+
+var person = new Person("Lee");
+console.log(person.name); // Lee
+```
+
+<br>
+
+![생성자 함수 작동방식](./Constructor.png)
+
+<br>
+
+### **객체 리터럴 방식과 생성자 함수 방식의 차이**
+
+```javascript
+// 1. 객체 리터럴 방식
+var personA = {
+  name: "Yang",
+};
+
+// 2. 생성자 함수 방식
+function Person(name, gender) {
+  this.name = name;
+}
+
+var personB = new Person("Lee");
+```
+
+객체를 생성하는 과정에서 객체 리터럴 방식과 생성자 함수 방식의 **차이는 프로토타입 객체**에 있다.
+
+- 객체 리터럴 방식
+  - 생성된 객체의 프로토타입 객체는 `Object.prototype`이다.
+  - 암묵적으로 `Object()` 생성자 함수를 호출하기 때문이다.
+- 생성자 함수 방식
+  - 생성된 객체의 프로토타입 객체는 `Person.prototype`이다.
+  - 명시적으로 `Person()` 생성자 함수를 호출하기 때문이다.
+
+<br>
+
+## 4. apply(), call(), bind() 호출 시 `this` 바인딩
+
+`this`에 바인딩 될 객체는 함수를 호출하는 방식에 의해 결정되는 것을 앞의 1, 2, 3번 경우를 통해 알았다. 이러한 `this`의 바인딩은 *Javascript Engine*에 의해 **암묵적**으로 수행된다.
+
+Javascript는 개발자가 `this`를 **명시적**으로 바인딩할 수 있는 방법도 제공하고 있으며, 그것은 `Function.prototype` 객체에 포함된 `apply()`, `call()` 메서드이다.
+
+```javascript
+/**
+ * @param {Object} thisArg 함수 내부의 this에 바인딩할 객체
+ * @param {Array} argsArray 함수에 전달할 인자(Argument)들의 배열
+ */
+func.apply(thisArg, [argsArray]);
+```
+
+중요한 점은 `apply()` 메서드를 **호출하는 주체는 함수**이며 `apply()` 메서드는 `this`에 특정 객체가 바인딩 되도록 할 뿐, **본질적인 기능은 함수 호출**이라는 것이다.
+
+```javascript
+var Person = function (name) {
+  this.name = name;
+};
+
+var person = {};
+
+// 생성자 함수 Person()을 호출하며, 이때 this에 객체 person를 바인딩한다.
+Person.apply(person, ["Lee"]);
+
+console.log(person); // { name: "Lee" }
+```
+
+`apply()` 메서드의 대표적인 용도는 `arguments` 객체와 같은 **유사 배열 객체**에 배열 메서드(= `Array.prototype`에 포함된 메서드)를 사용해야 하는 경우이다.
+
+`arguments` 객체는 배열같은 모양을 하고 있을 뿐, 실제 배열은 아니기 때문에 `slice()` 같은 배열 메서드를 사용할 수 없으나 **`apply()` 메서드를 이용하면 가능**하다.
+
+```javascript
+function convertArgsToArray() {
+  // arguments 객체를 배열로 변환
+  var arr = Array.prototype.slice.apply(arguments); // arguments.slice()와 동일
+
+  console.log(arr); // 1 2 3
+  return arr;
+}
+
+convertArgsToArray(1, 2, 3);
+```
+
+`call()` 메서드는 `apply()`와 동일한 기능을 수행하지만, `apply()`의 두번째 인자에서 **배열 형태로 넘긴 것을 각각 하나의 인자로 전달**한다.
+
+```javascript
+Person.apply(foo, [1, 2, 3]); // 인자를 배열의 형태로 전달
+
+Person.call(foo, 1, 2, 3); // 단일 인자로 전달
+```
+
+`apply()`와 `call()` 메서드는 콜백 함수의 `this`에 원하는 객체를 바인딩하기 위해 사용되기도 한다.
+
+```javascript
+function Person(name) {
+  this.name = name;
+}
+
+Person.prototype.doSomething = function (callback) {
+  if (typeof callback == "function") {
+    callback.call(this); // callback의 this에 Person 객체가 바인딩되게 한다.
+  }
+};
+
+function foo() {
+  console.log(this.name); // foo()의 this에는 전역 객체가 바인딩 되어있다.
+}
+
+var p = new Person("Lee");
+p.doSomething(foo); // 'Lee'
+```
+
+ES5에 추가된 `Function.prototype.bind`를 사용하는 방법도 가능하다.
+
+`Function.prototype.bind`는 함수에 인자로 **전달한 `this`가 바인딩된 새로운 함수를 반환**한다.
+
+간단히 말해서 `bind()`는 대상 함수의 `this`에 인자로 전달한 객체를 바인딩 하지만, `call()` 또는 `apply()`와 달리 즉시 실행하지 않는다.
