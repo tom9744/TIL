@@ -191,7 +191,7 @@ object.method();
 
 <br>
 
-![함수 호출 방식에 따른 this](./FunctionInvocationPattern.png)
+![함수 호출 방식에 따른 this](./images/FunctionInvocationPattern.png)
 
 <br>
 
@@ -225,7 +225,7 @@ objectB.sayName(); // Kim
 
 <br>
 
-![메서드 호출 방식에 따른 this](./MethodInvocationPattern.png)
+![메서드 호출 방식에 따른 this](./images/MethodInvocationPattern.png)
 
 <br>
 
@@ -283,7 +283,7 @@ console.log(person.name); // Lee
 
 <br>
 
-![생성자 함수 작동방식](./Constructor.png)
+![생성자 함수 작동방식](./images/Constructor.png)
 
 <br>
 
