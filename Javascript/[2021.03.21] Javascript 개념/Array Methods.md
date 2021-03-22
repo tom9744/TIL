@@ -86,3 +86,127 @@ console.log(arr); // (2) [{ name: "Junyoung" }, { name: "Soo" }]
 ```
 
 > `find()` 메서드와 사용법이 완전히 동일한 `findIndex()` 메서드를 사용해, 일치하는 요소 자체를 반환받지 않고 해당 요소의 인덱스 값만 반환받을 수도 있다.
+
+<br>
+
+## `map()`
+
+`map()` 메서드는 **반드시 `return`문을 통해 값을 반환하는 콜백 함수**를 매개변수로 갖는다. 콜백 함수에서 반환하는 값은 보편적으로 기존의 요소를 다른 형태로 가공한 결과이다.
+
+이후 배열의 모든 요소에 대해 전달된 콜백 함수가 실행되고, **콜백 함수가 반환한 값을 요소로 가지는 새로운 배열이 생성**된다. 즉, 원본 배열은 변하지 않고 유지된다.
+
+```javascript
+const arr = [10, 20, 30, 40];
+
+const multipliedByTen = arr.map((number, index, arr) => {
+  return number * 10;
+});
+
+console.log(multipliedByTen); // (4) [100, 200, 300, 400]
+console.log(multipliedByTen === arr); // false
+```
+
+<br>
+
+## `sort()`와 `reverse()`
+
+`sort()` 메서드는 배열 요소를 오름차순으로 정렬하며, `reverse()` 메서드는 배열 요소를 내림차순으로 정렬한다. 두 메서드 모두 **원본 배열을 직접 수정하며, 정렬된 상태의 배열을 반환**한다.
+
+```javascript
+const arr = [10, 2, 5, 4, 3];
+const sortedArr = arr.sort();
+
+console.log(sortedArr); // (5) [10, 2, 3, 4, 5]
+console.log(sortedArr === arr); // true
+```
+
+주의해야할 점은, `sort()` 또는 `reverse()` 메서드를 호출할 때 인수를 전달하지 않으면 **배열 요소를 모두 문자열로 변환한 후 정렬**한다는 점이다. 따라서 위의 예시에서도 ASCII 문자열 정렬 방식에 따라 `[10, 2, 3, 4, 5]`과 같이 정렬 되었다.
+
+위의 ASCII 문자열 정렬 방식을 따르지 않고 숫자의 크기에 따라 정렬하고자 하는 경우, **`sort()` 메서드를 호출할 때 콜백 함수를 전달**하면 된다. 콜백 함수는 현재 비교 대상인 두 개의 요소를 매개변수로 가지며, 개발자는 **배열 요소를 정렬하는 로직을 직접 구현**해야 한다.
+
+```javascript
+const arr = [10, 2, 5, 4, 3];
+
+const sortedArr = arr.sort((numA, numB) => {
+  if (numA > numB) return 1;
+  else if (numA === numB) return 0;
+  else return -1;
+});
+
+console.log(sortedArr); // (5) [2, 3, 4, 5, 10]
+```
+
+`reverse()` 메서드 역시, 아무런 인수가 주어지지 않으면 기본적으로 ASCII 문자열 정렬 방식을 따른다. 따라서 숫자 크기에 따른 내림차순 정렬을 위해서는 개발자가 직접 로직을 구현해야 한다.
+
+> 위에서 작성한 `sort()` 메서드를 수정해 `reverse()` 메서드처럼 동작하도록 할 수 있다.
+>
+> ```javascript
+> const arr = [10, 2, 5, 4, 3];
+>
+> const sortedArr = arr.sort((numA, numB) => {
+>   if (numA > numB) return -1;
+>   else if (numA === numB) return 0;
+>   else return 1;
+> });
+>
+> console.log(sortedArr); // (5) [10, 5, 4, 3, 2]
+> ```
+
+<br>
+
+## `filter()`
+
+앞서 살펴본 `indexOf()`, `find()` 메서드는 탐색 조건을 만족하는 요소가 1개 이상이더라도, 가장 먼저 마주친 요소 하나만을 반환하고 실행을 중단하였다. 반면 `filter()` 메서드는 특정한 조건을 만족하는 배열 요소를 모두 찾을 수 있게 해준다.
+
+`filter()` 메서드는 내부에 정의된 조건에 따라 **`true` 또는 `false`를 반환하는 콜백 함수**를 매개변수로 가진다. 이후 조건을 만족하는, 즉 **`true`가 반환된 요소로 구성된 새로운 배열을 반환**한다. 새로운 배열을 생성해 반환하므로, **원본 배열은 본래의 상태로 유지**된다.
+
+```javascript
+const arr = [10, 20, 30, 40];
+
+const filteredArr = arr.filter(number, index, arr) => {
+  return number > 20;
+});
+
+console.log(filteredArr); // (2) [30, 40]
+console.log(filteredArr === arr); // false
+```
+
+<br>
+
+## `reduce()`
+
+`reduce()` 메서드는 배열의 요소들을 **보다 단순한 형태**로 나타내기 위해 사용된다. 하지만 `reduce()` 메서드는 사용하기에 따라, 굉장히 다양한 방식으로 응용될 수도 있다.
+
+지금까지 소개한 메서드와 달리, `reduce()` 메서드는 두 개의 매개변수를 갖는다.
+
+- `callbackFn`: 콜백 함수는 다음 네 가지 인수를 받는다.
+
+  - `accumulator`
+    - 콜백 함수가 반환하는 값을 누적하기 위한 변수이다.
+    - `reduce()` 메서드에 `initialValue`가 전달된 경우, 이 값을 초기값으로 갖는다.
+  - `currentValue`
+    - 콜백 함수가 현재 처리하고 있는 배열 요소의 값이다.
+  - `currentIndex`
+    - 콜백 함수가 현재 처리하고 있는 배열 요소의 인덱스이다.
+  - `array`
+    - `reduce()` 메서드를 호출한 배열 자체이다.
+
+  콜백 함수는 `accumulator`와 `currentValue` 값을 이용해 연산을 수행하고, 그 결과를 `return`문을 통해 반환한다. 반환된 값은 콜백 함수의 다음 호출에서 `accumulator`의 값이 된다.
+
+- `initialValue`
+  - 콜백 함수의 최초 호출에서 첫 번째 인수인 `accumulator`에 제공하는 값이다.
+  - 초기값을 전달하지 않은 경우, `reduce()`를 호출한 배열의 첫 번째 요소를 사용한다.
+  - 반드시 배열일 필요는 없으며, 어떠한 자료형이라도 가능하다.
+
+`reduce()` 메서드를 사용하는 간단한 예시로, 정수 값으로 구성된 배열의 총합을 구할 수 있다.
+
+```javascript
+const arr = [10, 20, 30, 40];
+
+const sum = arr.reduce(prev, curr, currIndex, arr) => {
+  // [1] 0 + 10 = 10, [2] 10 + 20 = 30, [3] 30 + 30 = 60, [4] 60 + 40 = 100
+  return prev + curr;
+}, 0);
+
+console.log(sum); // 100
+```
