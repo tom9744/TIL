@@ -156,27 +156,24 @@ console.log(arr); // (4) [1, 2, 3, 4]
 
 <br>
 
-## 유용한 배열 관련 메서드
+## 배열의 순회
 
-### `slice()`
+Javascript에서 객체의 속성(_Property_)을 순회할 때 `for-in`문을 사용한다. 배열 역시 객체이므로, `for-in`문을 사용해 순회할 수 있다.
 
-`slice()` 메서드 역시, 전달받은 인수의 개수에 따라 다르게 작동한다.
+그러나 같은 이유로 배열은 속성(_Property_)을 가질 수 있다. `for-in`문을 사용하면 **배열 요소뿐만 아니라 불필요한 속성까지 포함**될 수 있으며, 요소들의 순서를 보장하지 않으므로 배열을 순차적으로 순회하는데 적합하지 않다.
 
-- `slice()`
-  - 대상 배열을 복사해 새로운 배열을 반환한다.
-  - `slice()`로 복사된 배열은 **기존의 배열과는 참조값이 다른, 완전히 새로운 배열**이다.
-- `slice(startIndex, endIndex)`
-  - `startIndex` 위치부터 시작해, `endIndex` 위치까지 잘라내어 새로운 배열을 반환한다.
-  - `endIndex`에 위치한 요소는 포함되지 않는다.
-  - `slice(2)`와 같이, `endIndex`를 명시하지 않으면 `startIndex`부터 배열의 끝까지 자른다.
+따라서 배열의 순회에는 반드시 `for`문, `for-of`문, 또는 `forEach()` 메서드를 사용해야 한다.
 
 ```javascript
-const arr = [1, 2, 3, 4];
+const arr = [0, 1, 2, 3];
+arr.foo = 10; // 배열에 속성을 추가하였다.
 
-const copiedArr = arr.slice();
-console.log(copiedArr); // (4) [1, 2, 3, 4]
-console.log(copiedArr === arr); /// false
-
-const slicedArr = arr.slice(0, 2);
-console.log(slicedArr); // (2) [1, 2], 인덱스 2 위치는 포함하지 않는다.
+for (const key in arr) {
+  console.log("key: " + key, "value: " + arr[key]);
+}
+// key: 0 value: 0
+// key: 1 value: 1
+// key: 2 value: 2
+// key: 3 value: 3
+// key: foo value: 10 => 배열 요소가 아닌, 불필요한 속성이 출력되었다.
 ```
