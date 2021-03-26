@@ -1,8 +1,10 @@
 import React, { Component } from "react";
 
-import Aux from "../../hoc/Auxiliary"
-import Burger from "../../components/Burger/Burger"
-import BuildControls from "../../components/Burger/BuildControls/BuildControls"
+import Aux from "../../hoc/Auxiliary";
+import Burger from "../../components/Burger/Burger";
+import BuildControls from "../../components/Burger/BuildControls/BuildControls";
+import Modal from "../../components/UI/Modal/Modal";
+import OrderSummary from "../../components/Burger/OrderSummary/OrderSummary";
 
 const INGREDIENT_PRICES = {
     salad: 0.5,
@@ -20,7 +22,8 @@ class BurgerBuilder extends Component {
             meat: 0
         },
         totalPrice: 2,
-        purchasable: false
+        purchasable: false,
+        v: false,
     }
 
     checkIfPurchasable = (ingredients) => {
@@ -68,6 +71,18 @@ class BurgerBuilder extends Component {
         this.checkIfPurchasable(updatedIngredients);
     }
 
+    orderNowHandler = () => {
+        this.setState({ showModal: true });
+    }
+
+    orderCancelHandler = () => {
+        this.setState({ showModal: false });
+    }
+
+    orderContinueHandler = () => {
+        alert("Continues...");
+    } 
+
     render () {
         const disableFlags = {...this.state.ingredients};
 
@@ -77,11 +92,22 @@ class BurgerBuilder extends Component {
 
         return (
             <Aux>
+                <Modal show={this.state.showModal} hideModal={this.orderCancelHandler}>
+                    <OrderSummary 
+                        ingredients={this.state.ingredients}
+                        cancelOrder={this.orderCancelHandler}
+                        continueOrder={this.orderContinueHandler}
+                        price={this.state.totalPrice}
+                    >
+                    </OrderSummary>
+                </Modal>
+
                 <Burger ingredients={this.state.ingredients}></Burger>
 
                 <BuildControls 
                     ingredientAdded={this.addIngredientHandler}
                     ingredientRemoved={this.removeIngredientHandler}
+                    orderNow={this.orderNowHandler}
                     disableFlags={disableFlags}
                     price={this.state.totalPrice}
                     purchasable={this.state.purchasable}
