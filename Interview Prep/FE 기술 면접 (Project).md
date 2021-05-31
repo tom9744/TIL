@@ -94,7 +94,7 @@
     - `data`를 조작하면 무한 루프를 발생시킬 수 있다.
 7. `beforeDestroy`
     - Vue 인스턴스가 해체되기 직전의 상태이다.
-    - 이벤트 리스터를 해제하기 좋은 위치이다.
+    - 이벤트 핸드러를 해제하기 좋은 위치이다.
 8. `destroyed`
     - Vue 인스턴스가 해체되었다.
     - `data`, `methods` 등에 접근할 수 없다.
@@ -103,22 +103,43 @@
 
 ### 6. MVC, MVVM 패턴이란?
 
-MVVM 패턴은 어플리케이션 로직과 사용자 인터페이스(UI)를 분리하기 위한 패턴이다.
+#### MVC 패턴
 
-Vue.js와 같은 SPA 프레임워크는 MVVM 패턴을 따르며, `Model`, `View`, `ViewModel`로 구성된다.
+MVC 패턴은 `Model`, `View`, `Controller` 세 가지 요소로 구성된다.
 
-<center>
-    <img src="./MVVM.png" width="550px" />
-</center>
+<img src="./MVC.png" width="300px" />
 
-- Model
-    - 순수 자바스크립트 객체를 의미한다.
-- View
-    - 웹 페이지의 DOM 구조를 의미한다.
-- View Model
+- `Model`은 데이터베이스이다.
+- `View`는 사용자 인터페이스이다.
+- `Controller`는 `Model`과 `View`를 연결하는 다리 역할을 한다.
+    - 사용자는 `Controller`를 이용해 `Model`의 데이터를 변경할 수 있다.
+    - 변경된 데이터는 `Controller`에 의해 `View`에 반영된다.
+
+- MVC 패턴은 각각의 역할을 분리해 구현할 수 있도록 한다.
+    - 맡은 바에 집중할 수 있다.
+    - 유지보수성, 확장성, 유연성이 개선된다.
+
+<br>
+
+#### MVVM 패턴
+
+MVVM 패턴은 **비즈니스 로직과 프레젠테이션 로직을 UI로부터 분리**한다.
+
+> 비즈니스 로직은 실세계의 규칙에 따라 데이터를 생성/저장하는 부분이다.
+
+> 프레젠테이션 로직은 어떤 화면을 제공할 것인지 결정하는 부분이다.
+
+<img src="./MVVM.png" width="300px" />
+
+MVVM 패턴은 `Model`, `View`, `ViewModel` 세 가지 요소로 구성된다.
+
+- `Model`은 데이터와 데이터를 조작하는 영역이다.
+- `View`는 사용자에게 보여지는 인터페이스 영역이다.
+- `View Model`은 `View`만을 위한 `Model`이다.
     - **Vue.js가 담당하고 있는 역할**이다.
-    - DOM이 변경되면, `DOM Listener`를 통해 Model에 신호를 전달한다.
-    - 모델이 변경되면, `데이터 바인딩`을 통해 View에 변경사항이 반영된다.
+    - 여러 `Model`에 접근하여, `View`에서 사용할 데이터를 가공한다.
+    - 사용자의 명령은 `ViewModel`에 의해 `View`에서 `Model`으로 전달된다.
+    - `View`와 `ViewModel`은 **데이터 바인딩**을 통해 동기화된다.
 
 <br>
 
