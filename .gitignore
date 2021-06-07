@@ -1,5 +1,7 @@
 node_modules/
 
+InterviewPrep/
+
 .DS_Store
 .env.local
 .env.development.local
